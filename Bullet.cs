@@ -6,47 +6,35 @@ using System.Threading.Tasks;
 
 namespace MyGame
 {
-    public class Bullet
+    public class Bullet : GameObject
     {
-        private Image bulletImg = Engine.LoadImage("assets/bullet.png");
-        public float X, Y;
         private float speed = 10f;
         private float angle;
-        private float dx, dy;
-
+        private int direction;
         public bool IsActive { get; private set; } = true;
 
-        public Bullet(float startX, float startY, float angleDegrees)
+        public Bullet(float startX, float startY, float angleDegrees, Image img, int direction = 1)
+            : base(img, startX, startY, 0, 0)
         {
-            X = startX;
-            Y = startY;
-            angle = angleDegrees;
-
+            this.angle = angleDegrees;
+            this.direction = direction;
             float rad = angleDegrees * (float)Math.PI / 180f;
-            dx = (float)Math.Cos(rad) * speed;
-            dy = (float)Math.Sin(rad) * speed;
+            dx = (float)Math.Cos(rad) * speed * direction;
+            dy = (float)Math.Sin(rad) * speed * direction;
         }
 
-        public void Update()
+        public override void Update()
         {
-            X += dx;
-            Y += dy;
-
-            if (X < 0 || X > 1700 || Y < 0 || Y > 900)
+            base.Update();
+            if (x < 0 || x > 1700 || y < 0 || y > 900)
                 IsActive = false;
-        }
-
-        public void Render()
-        {
-            Engine.Draw(bulletImg, X, Y);
         }
 
         public bool CollidesWith(Asteroide ast)
         {
-            float dx = X - ast.CenterX;
-            float dy = Y - ast.CenterY;
+            float dx = x - ast.CenterX;
+            float dy = y - ast.CenterY;
             float distance = (float)Math.Sqrt(dx * dx + dy * dy);
-
             return distance < ast.collisionRadius;
         }
     }

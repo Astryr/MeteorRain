@@ -81,34 +81,19 @@ namespace MyGame
             listaAsteroides.Add(new Asteroide(asteroidImg, x, y, dx, dy));
         }
 
-        // Verificar colisiones con el jugador 1
-        public void CheckCollisionsWithPlayer(PlayerOne player)
+        public void CheckCollisionsWithPlayer(Player player)
         {
             foreach (var asteroid in listaAsteroides)
             {
                 if (player.CollidesWith(asteroid))
                 {
-                    player.Freeze(); // Congelar al jugador si hay colisión
-                    break; // Solo una colisión por vez
+                    player.Freeze();
+                    break;
                 }
             }
         }
 
-        // Verificar colisiones con el jugador 2
-        public void CheckCollisionsWithPlayerTwo(PlayerTwo player)
-        {
-            foreach (var asteroid in listaAsteroides)
-            {
-                if (player.CollidesWith(asteroid))
-                {
-                    player.Freeze(); // Congelar al jugador si hay colisión
-                    break; // Solo una colisión por vez
-                }
-            }
-        }
-
-        // Verificar colisiones de balas de jugador 1
-        public void CheckBulletCollisions(List<Bullet> bullets)
+        public void CheckBulletCollisions(List<Bullet> bullets, Action sumarPuntos)
         {
             for (int i = listaAsteroides.Count - 1; i >= 0; i--)
             {
@@ -118,25 +103,7 @@ namespace MyGame
                     {
                         bullets.RemoveAt(j);
                         listaAsteroides.RemoveAt(i);
-                        GameManager.Instance.SumarPuntosJugador1(100); // Jugador 1 gana 100 puntos
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Verificar colisiones de balas de jugador 2
-        public void CheckBulletCollisions(List<BulletTwo> bullets)
-        {
-            for (int i = listaAsteroides.Count - 1; i >= 0; i--)
-            {
-                for (int j = bullets.Count - 1; j >= 0; j--)
-                {
-                    if (bullets[j].CollidesWith(listaAsteroides[i]))
-                    {
-                        bullets.RemoveAt(j);
-                        listaAsteroides.RemoveAt(i);
-                        GameManager.Instance.SumarPuntosJugador2(100); // Jugador 2 gana 100 puntos
+                        sumarPuntos();
                         break;
                     }
                 }

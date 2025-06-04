@@ -50,7 +50,7 @@ namespace MyGame
                 PlayerId.Two,
                 Engine.LoadImage("assets/navehalo2.png"),
                 1400, 450, 100f,
-                Engine.KEY_LEFT, Engine.KEY_RIGHT, Engine.KEY_UP, Engine.KEY_DOWN, Engine.KEY_K,
+                Engine.KEY_LEFT, Engine.KEY_RIGHT, Engine.KEY_DOWN, Engine.KEY_UP, Engine.KEY_K,
                 Engine.LoadImage("assets/bullet2.png"), -1
             );
 
@@ -107,10 +107,10 @@ namespace MyGame
 
                 // Verificar colisiones con los jugadores
                 asteroid1.CheckCollisionsWithPlayer(player1);
-                asteroid1.CheckCollisionsWithPlayerTwo(player2);
+                asteroid1.CheckCollisionsWithPlayer(player2);
 
-                asteroid1.CheckBulletCollisions(player1.GetBullets());
-                asteroid1.CheckBulletCollisions(player2.GetBullets());
+                asteroid1.CheckBulletCollisions(player1.GetBullets(), () => GameManager.Instance.SumarPuntosJugador1(100));
+                asteroid1.CheckBulletCollisions(player2.GetBullets(), () => GameManager.Instance.SumarPuntosJugador2(100));
 
                 gameManager.Update();
 
