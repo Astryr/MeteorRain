@@ -14,6 +14,8 @@ namespace MyGame
         private int screenWidth = 1700;
         private int screenHeight = 900;
 
+        public event Action<Asteroide> AsteroideDestruido;
+
         public Asteroides()
         {
         }
@@ -101,9 +103,11 @@ namespace MyGame
                 {
                     if (bullets[j].CollidesWith(listaAsteroides[i]))
                     {
+                        Asteroide ast = listaAsteroides[i];
                         bullets.RemoveAt(j);
                         listaAsteroides.RemoveAt(i);
                         sumarPuntos();
+                        AsteroideDestruido?.Invoke(ast); // Lanzar el evento
                         break;
                     }
                 }

@@ -55,6 +55,12 @@ namespace MyGame
             );
 
             asteroid1 = new Asteroides();
+            asteroid1.AsteroideDestruido += (ast) =>
+            {
+                // Aquí puedes poner lógica adicional, como reproducir un sonido o mostrar una animación
+                Console.WriteLine("¡Asteroide destruido en: " + ast.x + ", " + ast.y + "!");
+            };
+
             gameManager = GameManager.Instance;
 
             lastTime = DateTime.Now;
