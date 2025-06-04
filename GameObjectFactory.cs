@@ -10,7 +10,8 @@ namespace MyGame
 
         public static Asteroide CrearAsteroide(Image img, float x, float y, float dx, float dy)
         {
-            var asteroide = new Asteroide(img, x, y, dx, dy);
+            var asteroide = new Asteroide();
+            asteroide.Reset(x, y, dx, dy, img);
             listaAsteroides.Add(asteroide);
             return asteroide;
         }
@@ -26,7 +27,7 @@ namespace MyGame
                                          int keyLeft, int keyRight, int keyForward, int keyBackward, int keyShoot,
                                          Image bulletImg, int bulletDirection)
         {
-            // El constructor de Player requiere exactamente estos argumentos
+            
             return new Player(id, sprite, startX, startY, rotationSpeed,
                               keyLeft, keyRight, keyForward, keyBackward, keyShoot,
                               bulletImg, bulletDirection);

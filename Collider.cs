@@ -5,10 +5,10 @@ namespace MyGame
 {
     public class Collider
     {
-        // Evento que se dispara cuando ocurre una colisión
+        
         public event Action<GameObject> OnCollision;
 
-        // Referencia al objeto dueño de este collider
+        
         public GameObject Owner { get; }
 
         public Collider(GameObject owner)
@@ -16,7 +16,7 @@ namespace MyGame
             this.Owner = owner;
         }
 
-        // Chequea colisiones contra una lista de colliders
+        
         public void CheckCollisions(IEnumerable<Collider> others)
         {
             foreach (var other in others)
@@ -29,13 +29,13 @@ namespace MyGame
             }
         }
 
-        // Lógica simple de colisión (AABB)
+        
         private bool IsCollidingWith(Collider other)
         {
             float ax = Owner.x, ay = Owner.y, aw = 50, ah = 50;
             float bx = other.Owner.x, by = other.Owner.y, bw = 50, bh = 50;
 
-            // Si el objeto tiene tamaño personalizado
+            
             if (Owner is Player) { aw = 50; ah = 50; }
             if (Owner is Asteroide a) { aw = ah = a.collisionRadius * 2; }
             if (Owner is Bullet) { aw = ah = 10; }

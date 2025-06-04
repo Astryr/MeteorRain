@@ -50,7 +50,9 @@ namespace MyGame
             float dx = x - ast.CenterX;
             float dy = y - ast.CenterY;
             float distance = (float)Math.Sqrt(dx * dx + dy * dy);
-            return distance < ast.collisionRadius;
+            float bulletRadius = 5f;
+
+            return distance < (ast.collisionRadius + bulletRadius);
         }
     }
 }

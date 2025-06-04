@@ -30,11 +30,11 @@ namespace MyGame
         {
             Engine.Initialize();
 
-            // Initialize audio
+            
             SdlMixer.Mix_OpenAudio(22050, (short)(int)Sdl.AUDIO_S16SYS, 2, 4096);
-            SdlMixer.Mix_VolumeMusic(32); // Volume
+            SdlMixer.Mix_VolumeMusic(32); 
 
-            // Cargar música
+            
             backgroundMusic = new Sound("assets/background.mp3");
             backgroundMusic.Play();
 

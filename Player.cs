@@ -19,7 +19,7 @@ namespace MyGame
         private float timeSinceLastShot = 0f;
         private bool isFrozen = false;
         private float freezeTimer = 0f;
-        private float width = 50, height = 50;
+        private float width = 50, height = 55;
         private PlayerId playerId;
 
         // Controles personalizados
@@ -53,7 +53,6 @@ namespace MyGame
 
             Collider = new Collider(this);
             Collider.OnCollision += OnCollision;
-
         }
 
         public void Input()
@@ -131,10 +130,8 @@ namespace MyGame
 
         public void OnCollision(GameObject other)
         {
-            // Lógica personalizada de colisión
             if (other is Asteroide)
                 Freeze();
-            // Puedes agregar más lógica según el tipo de objeto
         }
 
         public void Freeze()
@@ -145,10 +142,26 @@ namespace MyGame
 
         public bool CollidesWith(Asteroide asteroid)
         {
-            return x < asteroid.x + asteroid.dx &&
-                   x + width > asteroid.x &&
-                   y < asteroid.y + asteroid.dy &&
-                   y + height > asteroid.y;
+            // Centro del asteroide
+            float circleX = asteroid.CenterX;
+            float circleY = asteroid.CenterY;
+            float radius = asteroid.collisionRadius;
+
+            // Bordes del rectángulo (nave)
+            float rectX = x;
+            float rectY = y;
+            float rectW = width;
+            float rectH = height;
+
+            // Encuentra el punto más cercano del rectángulo al centro del círculo
+            float closestX = Math.Max(rectX, Math.Min(circleX, rectX + rectW));
+            float closestY = Math.Max(rectY, Math.Min(circleY, rectY + rectH));
+
+            // Distancia desde el centro del círculo al punto más cercano
+            float dx = circleX - closestX;
+            float dy = circleY - closestY;
+
+            return (dx * dx + dy * dy) < (radius * radius);
         }
 
         public List<Bullet> Bullets => bullets;
