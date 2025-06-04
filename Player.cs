@@ -98,6 +98,13 @@ namespace MyGame
                     isFrozen = false;
                     freezeTimer = 0f;
                 }
+                // Actualizar balas aunque la nave esté congelada
+                for (int i = bullets.Count - 1; i >= 0; i--)
+                {
+                    bullets[i].Update();
+                    if (!bullets[i].IsActive)
+                        bullets.RemoveAt(i);
+                }
                 return;
             }
 
