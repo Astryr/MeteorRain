@@ -1,0 +1,135 @@
+﻿using System;
+using System.Data;
+using System.Diagnostics;
+using System.Net.NetworkInformation;
+using Tao.Sdl;
+
+namespace MyGame
+{
+    class Program
+    {
+        static private Image background = Engine.LoadImage("assets/fondohalo.png");
+        static private Image startScreen = Engine.LoadImage("assets/pantalla_inicio.png");
+
+        enum GameState { Start, Playing, Finish }
+        static GameState actualState = GameState.Start;
+
+        static private PlayerOne player1;
+        static private PlayerTwo player2;
+        static private Asteroides asteroid1;
+
+        static private GameManager gameManager;
+
+        static private DateTime lastTime;
+        static public float DeltaTime;
+
+        static private Sound backgroundMusic;
+
+        static void Main(string[] args)
+        {
+            Engine.Initialize();
+
+            // Initialize audio|
+            SdlMixer.Mix_OpenAudio(22050, (short)(int)Sdl.AUDIO_S16SYS, 2, 4096);
+
+            SdlMixer.Mix_VolumeMusic(32); // Volume
+
+            // Cargar música
+            backgroundMusic = new Sound("assets/background.mp3"); // Archivo de música
+            backgroundMusic.Play(); // Reproducir música en bucle
+
+            player1 = new PlayerOne();
+            player2 = new PlayerTwo();
+            asteroid1 = new Asteroides();
+            gameManager = GameManager.Instance;
+
+            lastTime = DateTime.Now;
+
+            while (true)
+            {
+                Input();
+                DateTime actualTime = DateTime.Now;
+                DeltaTime = (float)(actualTime - lastTime).TotalSeconds;
+                lastTime = actualTime;
+                Update();
+                Render();
+            }
+        }
+
+        static void Input()
+        {
+            if (actualState == GameState.Start)
+            {
+                Sdl.SDL_Event e;
+                if (Sdl.SDL_PollEvent(out e) != 0 && e.type == Sdl.SDL_KEYDOWN)
+                {
+                    actualState = GameState.Playing;
+                    gameManager.Reset(); // Reinicia el contador si tienes este método
+                    lastTime = DateTime.Now; // Reset de tiempo para DeltaTime
+                }
+                return;
+            }
+
+            if (actualState == GameState.Playing && !gameManager.GameFinished())
+            {
+                player1.Input();
+                player2.Input();
+            }
+
+            if (Engine.GetKey(Engine.KEY_ESC))
+            {
+                Environment.Exit(0);
+            }
+        }
+
+        static void Update()
+        {
+            if (actualState == GameState.Playing && !gameManager.GameFinished())
+            {
+                player1.Update();
+                player2.Update();
+
+                asteroid1.Update();
+
+                // Verificar colisiones con los jugadores
+                asteroid1.CheckCollisionsWithPlayer(player1);
+                asteroid1.CheckCollisionsWithPlayerTwo(player2);
+
+                asteroid1.CheckBulletCollisions(player1.GetBullets());
+                asteroid1.CheckBulletCollisions(player2.GetBullets());
+
+                gameManager.Update();
+
+                if (gameManager.GameFinished())
+                {
+                   actualState = GameState.Finish;
+                }
+            }
+        }
+        static void Render()
+        {
+            Engine.Clear();
+            Engine.Draw(background, 0, 0);
+
+            if (actualState == GameState.Start)
+            {
+                Engine.Draw(startScreen, 0, 0); // Dibuja la imagen de fondo
+                Engine.DrawText("METEOR RAIN", 275, 375, 0, 0, 255, gameManager.Font1);
+                Engine.DrawText("PRESS ANY KEY TO START", 600, 800, 255, 255, 255, gameManager.Font);
+            }
+            else if (actualState == GameState.Playing)
+            {
+                player1.Render();
+                player2.Render();
+                asteroid1.Render();
+                gameManager.Render();
+            }
+            else if (actualState == GameState.Finish)
+            {
+                gameManager.Render(); // ya incluye pantalla final
+            }
+
+            Engine.Show();
+        }
+    }
+}
