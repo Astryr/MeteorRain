@@ -14,8 +14,8 @@ namespace MyGame
         enum GameState { Start, Playing, Finish }
         static GameState actualState = GameState.Start;
 
-        static private PlayerOne player1;
-        static private PlayerTwo player2;
+        static private Player player1;
+        static private Player player2;
         static private Asteroides asteroid1;
 
         static private GameManager gameManager;
@@ -38,8 +38,22 @@ namespace MyGame
             backgroundMusic = new Sound("assets/background.mp3"); // Archivo de música
             backgroundMusic.Play(); // Reproducir música en bucle
 
-            player1 = new PlayerOne();
-            player2 = new PlayerTwo();
+            player1 = new Player(
+                PlayerId.One,
+                Engine.LoadImage("assets/navehalo.png"),
+                400, 450, 100f,
+                Engine.KEY_A, Engine.KEY_D, Engine.KEY_W, Engine.KEY_S, Engine.KEY_G,
+                Engine.LoadImage("assets/bullet.png"), 1
+            );
+
+            player2 = new Player(
+                PlayerId.Two,
+                Engine.LoadImage("assets/navehalo2.png"),
+                1400, 450, 100f,
+                Engine.KEY_LEFT, Engine.KEY_RIGHT, Engine.KEY_UP, Engine.KEY_DOWN, Engine.KEY_K,
+                Engine.LoadImage("assets/bullet2.png"), -1
+            );
+
             asteroid1 = new Asteroides();
             gameManager = GameManager.Instance;
 
