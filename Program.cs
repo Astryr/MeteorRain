@@ -29,14 +29,13 @@ namespace MyGame
         {
             Engine.Initialize();
 
-            // Initialize audio|
+            // Initialize audio
             SdlMixer.Mix_OpenAudio(22050, (short)(int)Sdl.AUDIO_S16SYS, 2, 4096);
-
             SdlMixer.Mix_VolumeMusic(32); // Volume
 
             // Cargar música
-            backgroundMusic = new Sound("assets/background.mp3"); // Archivo de música
-            backgroundMusic.Play(); // Reproducir música en bucle
+            backgroundMusic = new Sound("assets/background.mp3");
+            backgroundMusic.Play();
 
             player1 = new Player(
                 PlayerId.One,
@@ -57,7 +56,6 @@ namespace MyGame
             asteroid1 = new Asteroides();
             asteroid1.AsteroideDestruido += (ast) =>
             {
-                // Aquí puedes poner lógica adicional, como reproducir un sonido o mostrar una animación
                 Console.WriteLine("¡Asteroide destruido en: " + ast.x + ", " + ast.y + "!");
             };
 
@@ -84,8 +82,8 @@ namespace MyGame
                 if (Sdl.SDL_PollEvent(out e) != 0 && e.type == Sdl.SDL_KEYDOWN)
                 {
                     actualState = GameState.Playing;
-                    gameManager.Reset(); // Reinicia el contador si tienes este método
-                    lastTime = DateTime.Now; // Reset de tiempo para DeltaTime
+                    gameManager.Reset();
+                    lastTime = DateTime.Now;
                 }
                 return;
             }
@@ -115,8 +113,8 @@ namespace MyGame
                 asteroid1.CheckCollisionsWithPlayer(player1);
                 asteroid1.CheckCollisionsWithPlayer(player2);
 
-                asteroid1.CheckBulletCollisions(player1.GetBullets(), () => GameManager.Instance.SumarPuntosJugador1(100));
-                asteroid1.CheckBulletCollisions(player2.GetBullets(), () => GameManager.Instance.SumarPuntosJugador2(100));
+                asteroid1.CheckBulletCollisions(player1.Bullets, () => GameManager.Instance.SumarPuntosJugador1(100));
+                asteroid1.CheckBulletCollisions(player2.Bullets, () => GameManager.Instance.SumarPuntosJugador2(100));
 
                 gameManager.Update();
 
@@ -133,20 +131,20 @@ namespace MyGame
 
             if (actualState == GameState.Start)
             {
-                Engine.Draw(startScreen, 0, 0); // Dibuja la imagen de fondo
+                Engine.Draw(startScreen, 0, 0);
                 Engine.DrawText("METEOR RAIN", 275, 375, 0, 0, 255, gameManager.Font1);
                 Engine.DrawText("PRESS ANY KEY TO START", 600, 800, 255, 255, 255, gameManager.Font);
             }
             else if (actualState == GameState.Playing)
             {
-                player1.Render();
-                player2.Render();
+                player1.Draw();
+                player2.Draw();
                 asteroid1.Render();
                 gameManager.Render();
             }
             else if (actualState == GameState.Finish)
             {
-                gameManager.Render(); // ya incluye pantalla final
+                gameManager.Render();
             }
 
             Engine.Show();

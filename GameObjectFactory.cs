@@ -26,11 +26,10 @@ namespace MyGame
                                          int keyLeft, int keyRight, int keyForward, int keyBackward, int keyShoot,
                                          Image bulletImg, int bulletDirection)
         {
-            var player = new Player(id, sprite, startX, startY, rotationSpeed,
-                                    keyLeft, keyRight, keyForward, keyBackward, keyShoot,
-                                    bulletImg, bulletDirection);
-            bullets.Add(GameObjectFactory.CrearBullet(startX, startY, 0, bulletImg, bulletDirection));
-            return player;
+            // El constructor de Player requiere exactamente estos argumentos
+            return new Player(id, sprite, startX, startY, rotationSpeed,
+                              keyLeft, keyRight, keyForward, keyBackward, keyShoot,
+                              bulletImg, bulletDirection);
         }
     }
 

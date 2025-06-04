@@ -8,137 +8,141 @@ public enum PlayerId
     Two
 }
 
-public class Player
+namespace MyGame
 {
-    private Image sprite;
-    private float posX, posY;
-    private float angle;
-    private float rotationSpeed;
-    private List<Bullet> bullets = new List<Bullet>();
-    private float fireCooldown = 0.4f;
-    private float timeSinceLastShot = 0f;
-    private bool isFrozen = false;
-    private float freezeTimer = 0f;
-    private float width = 50, height = 50;
-    private PlayerId playerId;
-
-    // Controles personalizados
-    private int keyLeft, keyRight, keyForward, keyBackward, keyShoot;
-    private Image bulletImg;
-    private int bulletDirection;
-
-    // Tamaño de pantalla
-    private const float SCREEN_WIDTH = 1700f;
-    private const float SCREEN_HEIGHT = 900f;
-
-    public Player(PlayerId id, Image sprite, float startX, float startY, float rotationSpeed,
-                  int keyLeft, int keyRight, int keyForward, int keyBackward, int keyShoot,
-                  Image bulletImg, int bulletDirection)
+    public class Player : GameObject
     {
-        this.playerId = id;
-        this.sprite = sprite;
-        this.posX = startX;
-        this.posY = startY;
-        this.angle = 0f;
-        this.rotationSpeed = rotationSpeed;
-        this.keyLeft = keyLeft;
-        this.keyRight = keyRight;
-        this.keyForward = keyForward;
-        this.keyBackward = keyBackward;
-        this.keyShoot = keyShoot;
-        this.bulletImg = bulletImg;
-        this.bulletDirection = bulletDirection;
-    }
+        private float angle;
+        private float rotationSpeed;
+        private List<Bullet> bullets = new List<Bullet>();
+        private float fireCooldown = 0.4f;
+        private float timeSinceLastShot = 0f;
+        private bool isFrozen = false;
+        private float freezeTimer = 0f;
+        private float width = 50, height = 50;
+        private PlayerId playerId;
 
-    public void Input()
-    {
-        if (isFrozen) return;
+        // Controles personalizados
+        private int keyLeft, keyRight, keyForward, keyBackward, keyShoot;
+        private Image bulletImg;
+        private int bulletDirection;
 
-        // ROTACIÓN
-        if (Engine.GetKey(keyLeft))
-            angle -= rotationSpeed * (1f / 60f);
-        if (Engine.GetKey(keyRight))
-            angle += rotationSpeed * (1f / 60f);
+        // Tamaño de pantalla
+        private const float SCREEN_WIDTH = 1700f;
+        private const float SCREEN_HEIGHT = 900f;
 
-        // MOVIMIENTO
-        float nextX = posX, nextY = posY;
-        if (Engine.GetKey(keyForward))
+        public Collider Collider { get; }
+
+        public Player(PlayerId id, Image sprite, float startX, float startY, float rotationSpeed,
+                      int keyLeft, int keyRight, int keyForward, int keyBackward, int keyShoot,
+                      Image bulletImg, int bulletDirection)
+            : base(sprite, startX, startY, 0, 0)
         {
-            nextX += (float)Math.Cos(DegreesToRadians(angle));
-            nextY += (float)Math.Sin(DegreesToRadians(angle));
-        }
-        if (Engine.GetKey(keyBackward))
-        {
-            nextX -= (float)Math.Cos(DegreesToRadians(angle));
-            nextY -= (float)Math.Sin(DegreesToRadians(angle));
+            this.playerId = id;
+            this.angle = 0f;
+            this.rotationSpeed = rotationSpeed;
+            this.keyLeft = keyLeft;
+            this.keyRight = keyRight;
+            this.keyForward = keyForward;
+            this.keyBackward = keyBackward;
+            this.keyShoot = keyShoot;
+            this.bulletImg = bulletImg;
+            this.bulletDirection = bulletDirection;
+
+            Collider = new Collider(this);
+            Collider.OnCollision += obj => { /* lógica de colisión */ };
         }
 
-        // Colisión con bordes de pantalla
-        if (nextX < 0) nextX = 0;
-        if (nextX > SCREEN_WIDTH - width) nextX = SCREEN_WIDTH - width;
-        if (nextY < 0) nextY = 0;
-        if (nextY > SCREEN_HEIGHT - height) nextY = SCREEN_HEIGHT - height;
-
-        posX = nextX;
-        posY = nextY;
-    }
-
-    public void Update()
-    {
-        if (isFrozen)
+        public void Input()
         {
-            freezeTimer += Program.DeltaTime;
-            if (freezeTimer >= 3f)
+            if (isFrozen) return;
+
+            // ROTACIÓN
+            if (Engine.GetKey(keyLeft))
+                angle -= rotationSpeed * (1f / 60f);
+            if (Engine.GetKey(keyRight))
+                angle += rotationSpeed * (1f / 60f);
+
+            // MOVIMIENTO
+            float nextX = x, nextY = y;
+            if (Engine.GetKey(keyForward))
             {
-                isFrozen = false;
-                freezeTimer = 0f;
+                nextX += (float)Math.Cos(DegreesToRadians(angle));
+                nextY += (float)Math.Sin(DegreesToRadians(angle));
             }
-            return;
+            if (Engine.GetKey(keyBackward))
+            {
+                nextX -= (float)Math.Cos(DegreesToRadians(angle));
+                nextY -= (float)Math.Sin(DegreesToRadians(angle));
+            }
+
+            // Colisión con bordes de pantalla
+            if (nextX < 0) nextX = 0;
+            if (nextX > SCREEN_WIDTH - width) nextX = SCREEN_WIDTH - width;
+            if (nextY < 0) nextY = 0;
+            if (nextY > SCREEN_HEIGHT - height) nextY = SCREEN_HEIGHT - height;
+
+            x = nextX;
+            y = nextY;
         }
 
-        Input();
-
-        timeSinceLastShot += Program.DeltaTime;
-
-        if (Engine.GetKey(keyShoot) && timeSinceLastShot >= fireCooldown)
+        public override void Update()
         {
-            bullets.Add(new Bullet(posX, posY, angle, bulletImg, bulletDirection));
-            timeSinceLastShot = 0f;
+            if (isFrozen)
+            {
+                freezeTimer += Program.DeltaTime;
+                if (freezeTimer >= 3f)
+                {
+                    isFrozen = false;
+                    freezeTimer = 0f;
+                }
+                return;
+            }
+
+            Input();
+
+            timeSinceLastShot += Program.DeltaTime;
+
+            if (Engine.GetKey(keyShoot) && timeSinceLastShot >= fireCooldown)
+            {
+                bullets.Add(new Bullet(x, y, angle, bulletImg, bulletDirection));
+                timeSinceLastShot = 0f;
+            }
+
+            for (int i = bullets.Count - 1; i >= 0; i--)
+            {
+                bullets[i].Update();
+                if (!bullets[i].IsActive)
+                    bullets.RemoveAt(i);
+            }
         }
 
-        for (int i = bullets.Count - 1; i >= 0; i--)
+        public override void Draw()
         {
-            bullets[i].Update();
-            if (!bullets[i].IsActive)
-                bullets.RemoveAt(i);
+            Engine.DrawRotated(sprite, x, y, angle * -1);
+            foreach (var bullet in bullets)
+                bullet.Draw();
         }
-    }
 
-    public void Render()
-    {
-        Engine.DrawRotated(sprite, posX, posY, angle * -1);
-        foreach (var bullet in bullets)
-            bullet.Draw();
-    }
+        public void Freeze()
+        {
+            isFrozen = true;
+            freezeTimer = 0f;
+        }
 
-    public void Freeze()
-    {
-        isFrozen = true;
-        freezeTimer = 0f;
-    }
+        public bool CollidesWith(Asteroide asteroid)
+        {
+            return x < asteroid.x + asteroid.dx &&
+                   x + width > asteroid.x &&
+                   y < asteroid.y + asteroid.dy &&
+                   y + height > asteroid.y;
+        }
 
-    public bool CollidesWith(Asteroide asteroid)
-    {
-        return posX < asteroid.x + asteroid.dx &&
-               posX + width > asteroid.x &&
-               posY < asteroid.y + asteroid.dy &&
-               posY + height > asteroid.y;
-    }
+        public List<Bullet> Bullets => bullets;
 
-    public List<Bullet> GetBullets() => bullets;
-
-    private float DegreesToRadians(float degrees)
-    {
-        return degrees * (float)Math.PI / 180f;
+        private float DegreesToRadians(float degrees)
+        {
+            return degrees * (float)Math.PI / 180f;
+        }
     }
 }
