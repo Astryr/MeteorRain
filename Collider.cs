@@ -46,6 +46,8 @@ namespace MyGame
 
             return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
         }
+
+        
     }
 
 }

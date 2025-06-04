@@ -58,6 +58,9 @@
     <Compile Include="GameManager.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameObjectFactory.cs" />
+    <Compile Include="ICollidable.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="IUpdatable.cs" />
     <Compile Include="NaveControl.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

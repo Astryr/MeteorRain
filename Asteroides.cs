@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyGame
 {
-    public class Asteroides
+    public class Asteroides : IUpdatable, IDrawable
     {
         private Image asteroidImg = Engine.LoadImage("assets/asteroide.png");
         private List<Asteroide> listaAsteroides = new List<Asteroide>();
@@ -36,9 +36,12 @@ namespace MyGame
                 if (listaAsteroides[i].IsOffScreen(screenWidth, screenHeight))
                     listaAsteroides.RemoveAt(i);
             }
+
+            foreach (var ast in listaAsteroides)
+                ast.Update();
         }
 
-        public void Render()
+        public void Draw()
         {
             foreach (var ast in listaAsteroides)
             {

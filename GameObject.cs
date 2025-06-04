@@ -1,6 +1,6 @@
 namespace MyGame
 {
-    public abstract class GameObject
+    public abstract class GameObject : IUpdatable, IDrawable
     {
         public Image sprite;
         public float x, y;
@@ -15,15 +15,7 @@ namespace MyGame
             this.dy = dy;
         }
 
-        public virtual void Update()
-        {
-            x += dx;
-            y += dy;
-        }
-
-        public virtual void Draw()
-        {
-            Engine.Draw(sprite, x, y);
-        }
+        public virtual void Update() { }
+        public virtual void Draw() { }
     }
 }

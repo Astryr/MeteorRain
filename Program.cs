@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
@@ -104,10 +105,10 @@ namespace MyGame
         {
             if (actualState == GameState.Playing && !gameManager.GameFinished())
             {
-                player1.Update();
-                player2.Update();
+                List<IUpdatable> updatables = new List<IUpdatable> { player1, player2, asteroid1, /* ... */ };
 
-                asteroid1.Update();
+                foreach (var obj in updatables)
+                    obj.Update();
 
                 // Verificar colisiones con los jugadores
                 asteroid1.CheckCollisionsWithPlayer(player1);
@@ -137,9 +138,11 @@ namespace MyGame
             }
             else if (actualState == GameState.Playing)
             {
-                player1.Draw();
-                player2.Draw();
-                asteroid1.Render();
+                List<IDrawable> drawables = new List<IDrawable> { player1, player2, asteroid1, /* ... */ };
+
+                foreach (var obj in drawables)
+                    obj.Draw();
+
                 gameManager.Render();
             }
             else if (actualState == GameState.Finish)

@@ -10,7 +10,7 @@ public enum PlayerId
 
 namespace MyGame
 {
-    public class Player : GameObject
+    public class Player : GameObject, IUpdatable, IDrawable, ICollidable
     {
         private float angle;
         private float rotationSpeed;
@@ -33,6 +33,8 @@ namespace MyGame
 
         public Collider Collider { get; }
 
+        public float Angle => angle;
+
         public Player(PlayerId id, Image sprite, float startX, float startY, float rotationSpeed,
                       int keyLeft, int keyRight, int keyForward, int keyBackward, int keyShoot,
                       Image bulletImg, int bulletDirection)
@@ -50,7 +52,8 @@ namespace MyGame
             this.bulletDirection = bulletDirection;
 
             Collider = new Collider(this);
-            Collider.OnCollision += obj => { /* lógica de colisión */ };
+            Collider.OnCollision += OnCollision;
+
         }
 
         public void Input()
@@ -119,9 +122,19 @@ namespace MyGame
 
         public override void Draw()
         {
+            // Dibuja el jugador rotado
             Engine.DrawRotated(sprite, x, y, angle * -1);
+            // Dibuja las balas
             foreach (var bullet in bullets)
                 bullet.Draw();
+        }
+
+        public void OnCollision(GameObject other)
+        {
+            // Lógica personalizada de colisión
+            if (other is Asteroide)
+                Freeze();
+            // Puedes agregar más lógica según el tipo de objeto
         }
 
         public void Freeze()
